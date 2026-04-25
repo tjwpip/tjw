@@ -44,7 +44,7 @@ print(f"🏷️  本地当前版本：{LOCAL_VERSION}")
 
 # ===================== 获取 PyPI 最新版本 =====================
 print("🔍 获取 PyPI 最新版本...")
-LATEST_VERSION = LOCAL_VERSION
+LATEST_VERSION = "1.0.0"
 
 try:
     url = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
@@ -55,7 +55,7 @@ try:
         releases.sort(key=lambda x: tuple(map(int, x.split("."))))
         LATEST_VERSION = releases[-1] if releases else "1.0.0"
 except:
-    LATEST_VERSION = "1.0.0"
+    LATEST_VERSION = LOCAL_VERSION
 
 print(f"📌 PyPI 最新版本：{LATEST_VERSION}")
 

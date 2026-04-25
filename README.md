@@ -23,8 +23,14 @@ pip show tjw
 ```
 
 ## 使用方法
+### 终端PYTHON直接使用
 
-### 作为库使用
+```bash
+python -c "from tjw import hello; print(hello(number=43))"
+# 输出：43
+```
+
+### 作为库在项目中使用
 
 ```python
 from tjw.core import tjw_class, hello
