@@ -1,5 +1,5 @@
 from tjw.core import *
 
 if __name__ == '__main__':
-    result = tjw.helloworld()
+    result = hello()
     print(f"结果：{result}")

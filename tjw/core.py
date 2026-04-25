@@ -1,6 +1,7 @@
-class tjw类:
-    def helloworld(self, name: str = "tjw"):
-        return f"hello {name}!"
+class tjw_class:
+    def helloworld(self, name: str = "TJW"):
+        return f"helloworld,[{name}]!"
 
 
-tjw = tjw类()
+def hello(number: int = 0):
+    return number + 1
