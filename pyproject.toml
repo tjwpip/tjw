@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tjw"
-version = "1.0.15"
+version = "1.0.16"
 description = "TJW 私人项目 - 提供身份证工具等实用功能的命令行工具和API服务"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -35,3 +35,6 @@ tjw = "tjw.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.setuptools.package-data]
+web = ["static/**/*"]
