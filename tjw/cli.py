@@ -1,3 +1,5 @@
+__version__ = "1.0.14"
+
 import argparse
 import subprocess
 import sys
@@ -9,6 +11,8 @@ tjw = tjw_class()
 
 def main():
     parser = argparse.ArgumentParser(
+        prog="tjw",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='TJW 命令行工具',
         epilog='示例: tjw helloworld --name 张三 或 tjw web --port 8000'
     )
@@ -27,6 +31,8 @@ def main():
     web_parser.add_argument('--port', type=int, default=8000, help='服务端口，默认为 8000')
     web_parser.add_argument('--host', default='0.0.0.0', help='绑定地址，默认为 0.0.0.0')
     web_parser.add_argument('--reload', action='store_true', help='启用自动重载（开发模式）')
+
+    parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {__version__}")
 
     args = parser.parse_args()
 

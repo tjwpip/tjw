@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Path, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
@@ -28,12 +29,12 @@ sfz_tool = CShengFenZheng()
 app.include_router(sfz_router, prefix="/api/sfz", tags=["身份证工具"])
 
 # 挂载静态文件
-app.mount("/static", StaticFiles(directory="web/static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 
 # 根路径 - 显示首页（支持模块ID参数）
 @app.get("/", tags=["首页"])
 async def root(id: int = Query(None, description="模块ID")):
-    return FileResponse("web/static/index.html")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/index.html"))
 
 # 简洁路径访问 /id/{id}
 @app.get("/id/{id}", tags=["快捷访问"])
