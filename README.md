@@ -32,7 +32,7 @@ python -c "from tjw import hello; print(hello(number=43))"
 
 ### 作为库在项目中使用
 
-```python
+```text
 from tjw.core import tjw_class, hello
 
 # 使用 tjw_class

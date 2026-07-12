@@ -1,5 +1,6 @@
 twine
 wheel
 setuptools
-
-
+fastapi
+uvicorn
+pydantic

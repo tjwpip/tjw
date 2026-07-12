@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tjw"
+version = "1.0.14"
+description = "TJW 私人项目 - 提供身份证工具等实用功能的命令行工具和API服务"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["tjw", "身份证工具", "API服务"]
+authors = [
+    { name = "tjw", email = "saogegood@163.com" }
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "twine",
+    "wheel",
+    "setuptools"
+]
+
+[project.scripts]
+tjw = "tjw.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]

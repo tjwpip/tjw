@@ -1,62 +1,28 @@
-import argparse
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+TJW API 启动脚本
+"""
 import subprocess
 import sys
+import os
 
-from tjw.core import tjw_class, hello
-
-tjw = tjw_class()
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description='TJW 命令行工具',
-        epilog='示例: tjw helloworld --name 张三 或 tjw web --port 8000'
-    )
-    subparsers = parser.add_subparsers(dest='command', help='可用命令')
-
-    # helloworld 命令
-    helloworld_parser = subparsers.add_parser('helloworld', help='输出问候信息')
-    helloworld_parser.add_argument('--name', default='TJW', help='问候对象的名称，默认为 TJW')
-
-    # hello 命令
-    hello_parser = subparsers.add_parser('hello', help='执行数值加1操作')
-    hello_parser.add_argument('--number', type=int, default=0, help='要加1的数值，默认为0')
-
-    # web 命令 - 启动Web服务
-    web_parser = subparsers.add_parser('web', help='启动 TJW Web 服务')
-    web_parser.add_argument('--port', type=int, default=8000, help='服务端口，默认为 8000')
-    web_parser.add_argument('--host', default='0.0.0.0', help='绑定地址，默认为 0.0.0.0')
-    web_parser.add_argument('--reload', action='store_true', help='启用自动重载（开发模式）')
-
-    args = parser.parse_args()
-
-    if args.command == 'helloworld':
-        print(tjw.helloworld(name=args.name))
-    elif args.command == 'hello':
-        result = hello(number=args.number)
-        print(f"结果: {result}")
-    elif args.command == 'web':
-        start_server(args.port, args.host, args.reload)
-    else:
-        parser.print_help()
-
-
-def print_banner(port):
-    banner = f"""
+def print_banner():
+    banner = """
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                        🚀 TJW FastAPI Service                                ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
 ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
-║  │  🏠 首页          │  http://localhost:{port}/                         │  ║
-║  │  📖 API文档       │  http://localhost:{port}/docs                    │  ║
-║  │  📘 Redoc文档     │  http://localhost:{port}/redoc                   │  ║
-║  │  🏥 健康检查      │  http://localhost:{port}/health                  │  ║
-║  │  🔌 API基础路径    │  http://localhost:{port}/api/sfz                │  ║
+║  │  🏠 首页          │  http://localhost:8000/                           │  ║
+║  │  📖 API文档       │  http://localhost:8000/docs                      │  ║
+║  │  📘 Redoc文档     │  http://localhost:8000/redoc                     │  ║
+║  │  🏥 健康检查      │  http://localhost:8000/health                    │  ║
+║  │  🔌 API基础路径    │  http://localhost:8000/api/sfz                  │  ║
 ║  └────────────────────────────────────────────────────────────────────────┘  ║
 ║                                                                              ║
 ║  ┌──────────────────────── 快捷访问 ─────────────────────────┐              ║
-║  │  🆔 身份证工具    │  /id/1002 或 /?id=1002              │              ║
+║  │  🆔 身份证工具    │  /id/1002 或 /?id=1002  例：http://localhost:8000/id/1002  │              ║
 ║  │  📊 仪表盘        │  /id/1001 或 /?id=1001              │              ║
 ║  │  🔧 实用工具      │  /id/1003 或 /?id=1003              │              ║
 ║  │  ⚙️ 系统设置      │  /id/1004 或 /?id=1004              │              ║
@@ -66,39 +32,46 @@ def print_banner(port):
 """
     print(banner)
 
-
-def start_server(port, host, reload):
+def main():
+    print("\n" + "="*70)
+    print("          📦 正在启动 TJW FastAPI 服务...")
+    print("="*70)
+    
+    # 确保依赖已安装
     try:
+        import fastapi
         import uvicorn
-        from web.app import app
+        import pydantic
+        print("✅ 依赖检查通过")
     except ImportError:
         print("⚠️  检测到依赖未安装，正在安装...")
         subprocess.run([sys.executable, "-m", "pip", "install", "fastapi", "uvicorn", "pydantic"], check=True)
         print("✅ 依赖安装完成")
-        import uvicorn
-
-    print("\n" + "="*70)
-    print(f"          📦 正在启动 TJW FastAPI 服务 (端口: {port})...")
-    print("="*70)
-
-    print_banner(port)
-    print("💡 提示: 按 Ctrl+C 停止服务")
-    print("="*70 + "\n")
-
+    
+    print("\n🚀 启动服务...")
+    
+    # 启动 uvicorn
+    cmd = [
+        sys.executable, "-m", "uvicorn", 
+        "web.app:app", 
+        "--host", "0.0.0.0", 
+        "--port", "8000", 
+        "--reload"
+    ]
+    
     try:
-        uvicorn.run(
-            "web.app:app",
-            host=host,
-            port=port,
-            reload=reload,
-            log_level="info"
-        )
+        # 先打印启动成功后的信息
+        print("\n" + "="*70)
+        print_banner()
+        print("💡 提示: 按 Ctrl+C 停止服务")
+        print("="*70 + "\n")
+        
+        subprocess.run(cmd, check=True)
     except KeyboardInterrupt:
         print("\n✅ 服务已停止")
-    except Exception as e:
+    except subprocess.CalledProcessError as e:
         print(f"\n❌ 服务启动失败: {e}")
         sys.exit(1)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

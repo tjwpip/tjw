@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TJW 工具平台</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>
+                    <span class="logo">T</span>
+                    <span>TJW 工具平台</span>
+                </h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-module="dashboard">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">仪表盘</span>
+                </div>
+                <div class="nav-item" data-module="sfz">
+                    <span class="nav-item-icon">🆔</span>
+                    <span class="nav-item-text">身份证工具</span>
+                </div>
+                <div class="nav-item" data-module="tools">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">实用工具</span>
+                </div>
+                <div class="nav-item" data-module="settings">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">系统设置</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-item" onclick="window.open('/docs', '_blank')">
+                    <span>📖</span>
+                    <span>API 文档</span>
+                </div>
+                <div class="sidebar-footer-item" onclick="window.open('https://github.com/tjwpip/tjw', '_blank')">
+                    <span>🐙</span>
+                    <span>GitHub</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="menu-toggle">☰</div>
+                    <h2 class="header-title">仪表盘</h2>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn secondary" onclick="tjwApp.loadModule('dashboard')">
+                        🏠 首页
+                    </button>
+                    <button class="header-btn primary" onclick="window.open('/docs', '_blank')">
+                        📖 API文档
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content" id="page-content">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

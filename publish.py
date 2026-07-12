@@ -74,6 +74,24 @@ content = re.sub(r'^版本号 = ".*"', f'版本号 = "{NEW_VERSION}"', content, 
 with open("setup.py", "w", encoding="utf-8") as f:
     f.write(content)
 
+# ===================== 写入 pyproject.toml（setuptools>=61 优先读取此文件） =====================
+if os.path.exists("pyproject.toml"):
+    with open("pyproject.toml", "r", encoding="utf-8") as f:
+        pp_content = f.read()
+    new_pp_content = re.sub(
+        r'(^version\s*=\s*)"[^"]+"',
+        rf'\1"{NEW_VERSION}"',
+        pp_content,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    if new_pp_content != pp_content:
+        with open("pyproject.toml", "w", encoding="utf-8") as f:
+            f.write(new_pp_content)
+        print(f"📝 pyproject.toml 版本已更新为 {NEW_VERSION}")
+    else:
+        print("⚠️ pyproject.toml 中未找到 version 字段，请手动检查")
+
 # ===================== 安装依赖（自动修复） =====================
 try:
     subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "twine", "wheel"], check=True,
@@ -96,7 +114,7 @@ clean()
 
 # ===================== 打包 =====================
 print(f"🟡 开始打包 {PACKAGE_NAME} {NEW_VERSION}...")
-cmd = [sys.executable, "setup.py", "sdist", "bdist_wheel"]
+cmd = [sys.executable, "-m", "build"]
 if not DEBUG_MODE:
     subprocess.run(cmd, capture_output=True)
 else:

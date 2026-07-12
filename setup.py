@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 # ===================== 核心：版本号会被 publish.sh 自动更新 =====================
 # 重要
 PIP包名 = "tjw"
-版本号 = "1.0.11"
+版本号 = "1.0.14"
 一句话描述 = "一个简单的命令行工具，用于输出问候信息和数值加1"
 
 # 一般重要
@@ -52,7 +52,6 @@ setup(
     author_email=作者邮箱,
     long_description=获得详细描述(),
     long_description_content_type="text/markdown",
-    license="MIT",
 
     url=网站,
     packages=find_packages(),
@@ -72,7 +71,6 @@ setup(
     install_requires=获取依赖列表(),
 
     keywords=关键词,
-    include_package_data=True,
     zip_safe=False,
 
     # 添加命令行入口点
