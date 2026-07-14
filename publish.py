@@ -15,16 +15,34 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# ===================== 读取 setup.py 配置 =====================
-def get_setup_value(key: str) -> str:
-    with open("setup.py", "r", encoding="utf-8") as f:
+# ===================== 从 tjw/__init__.py 读取版本号 =====================
+def get_tjw_version() -> str:
+    """从 tjw/__init__.py 读取版本号"""
+    init_path = os.path.join(os.path.dirname(__file__), "tjw", "__init__.py")
+    with open(init_path, "r", encoding="utf-8") as f:
         content = f.read()
-    match = re.search(rf'^{key}\s*=\s*"([^"]+)"', content, re.MULTILINE)
-    return match.group(1) if match else ""
+    match = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
+    return match.group(1) if match else "1.0.0"
 
 
-PACKAGE_NAME = get_setup_value("PIP包名")
-LOCAL_VERSION = get_setup_value("版本号")
+def update_tjw_version(new_version: str):
+    """更新 tjw/__init__.py 中的版本号"""
+    init_path = os.path.join(os.path.dirname(__file__), "tjw", "__init__.py")
+    with open(init_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    new_content = re.sub(
+        r'__version__\s*=\s*["\']([^"\']+)["\']',
+        f'__version__ = "{new_version}"',
+        content,
+        count=1
+    )
+    with open(init_path, "w", encoding="utf-8") as f:
+        f.write(new_content)
+    print(f"📝 tjw/__init__.py 版本已更新为 {new_version}")
+
+
+PACKAGE_NAME = "tjw"  # 直接指定包名
+LOCAL_VERSION = get_tjw_version()  # 从 tjw/__init__.py 读取版本号
 
 # ===================== 配置 =====================
 PYPI_TOKEN = os.getenv("PYPI_API_TOKEN")
@@ -65,37 +83,15 @@ new_patch = int(patch) + 1
 NEW_VERSION = f"{major}.{minor}.{new_patch}"
 print(f"✅ 即将发布新版本：{NEW_VERSION}")
 
-# ===================== 写入 setup.py =====================
-with open("setup.py", "r", encoding="utf-8") as f:
-    content = f.read()
-
-content = re.sub(r'^版本号 = ".*"', f'版本号 = "{NEW_VERSION}"', content, flags=re.MULTILINE)
-
-with open("setup.py", "w", encoding="utf-8") as f:
-    f.write(content)
-
-# ===================== 写入 pyproject.toml（setuptools>=61 优先读取此文件） =====================
-if os.path.exists("pyproject.toml"):
-    with open("pyproject.toml", "r", encoding="utf-8") as f:
-        pp_content = f.read()
-    new_pp_content = re.sub(
-        r'(^version\s*=\s*)"[^"]+"',
-        rf'\1"{NEW_VERSION}"',
-        pp_content,
-        count=1,
-        flags=re.MULTILINE,
-    )
-    if new_pp_content != pp_content:
-        with open("pyproject.toml", "w", encoding="utf-8") as f:
-            f.write(new_pp_content)
-        print(f"📝 pyproject.toml 版本已更新为 {NEW_VERSION}")
-    else:
-        print("⚠️ pyproject.toml 中未找到 version 字段，请手动检查")
+# ===================== 更新 tjw/__init__.py（在打包前更新，确保 setup.py 能读取到新版本） =====================
+update_tjw_version(NEW_VERSION)
 
 # ===================== 安装依赖（自动修复） =====================
+print("📦 安装/升级打包依赖...")
 try:
-    subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "twine", "wheel"], check=True,
+    subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "twine", "wheel", "build"], check=True,
                    capture_output=not DEBUG_MODE)
+    print("✅ 依赖安装完成")
 except Exception as e:
     print("❌ 依赖安装/升级失败")
     sys.exit(1)
@@ -115,16 +111,24 @@ clean()
 # ===================== 打包 =====================
 print(f"🟡 开始打包 {PACKAGE_NAME} {NEW_VERSION}...")
 cmd = [sys.executable, "-m", "build"]
-if not DEBUG_MODE:
-    subprocess.run(cmd, capture_output=True)
-else:
-    subprocess.run(cmd)
+try:
+    result = subprocess.run(cmd, capture_output=not DEBUG_MODE, check=True, text=True)
+    if DEBUG_MODE and result.stdout:
+        print(result.stdout)
+except subprocess.CalledProcessError as e:
+    print("❌ 打包失败")
+    if e.stderr:
+        print(f"错误信息: {e.stderr}")
+    clean()
+    sys.exit(1)
 
 # 校验打包结果
 if not os.path.exists("dist") or len(os.listdir("dist")) == 0:
-    print("❌ 打包失败")
+    print("❌ 打包失败：dist 目录为空")
     clean()
     sys.exit(1)
+
+print(f"✅ 打包成功！")
 
 # ===================== 上传（修复 Windows 找不到 twine 问题） =====================
 print("🟢 上传到 PyPI...")

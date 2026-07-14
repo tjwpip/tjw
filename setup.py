@@ -1,10 +1,18 @@
 import os
+import sys
 from setuptools import setup, find_packages
 
-# ===================== 核心：版本号会被 publish.sh 自动更新 =====================
-# 重要
+# 添加 tjw 模块路径到 sys.path
+sys.path.insert(0, os.path.dirname(__file__))
+
+# ===================== 核心：版本号从 tjw/__init__.py 读取 =====================
+# 重要：统一版本管理，所有版本号都从这里读取
+try:
+    from tjw import __version__ as 版本号
+except ImportError:
+    版本号 = "1.0.0"
+
 PIP包名 = "tjw"
-版本号 = "1.0.16"
 一句话描述 = "一个简单的命令行工具，用于输出问候信息和数值加1"
 
 # 一般重要

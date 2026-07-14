@@ -213,69 +213,146 @@ class TJWApp {
     async loadSFZContent() {
         const sfzContent = document.querySelector('#sfz-content');
         sfzContent.innerHTML = `
-            <div style="max-width: 800px; margin: 0 auto;">
-                <div class="sfz-card">
-                    <h3>生成单个身份证</h3>
-                    <div class="sfz-form-group">
-                        <label for="sfz-sex">性别选择</label>
-                        <select id="sfz-sex">
-                            <option value="">🎲 随机</option>
-                            <option value="male">👨 男</option>
-                            <option value="female">👩 女</option>
-                        </select>
+            <div style="max-width: 600px; margin: 0 auto;">
+                <!-- 功能切换图标 -->
+                <div class="sfz-toolbar">
+                    <div class="sfz-toolbar-item active" onclick="tjwApp.switchSFZTab('generate')" title="生成身份证">
+                        <span>🎯</span>
                     </div>
-                    <button class="sfz-btn" onclick="tjwApp.sfzGenerate()">
-                        <span>🎯 生成身份证</span>
-                    </button>
-                    <div id="sfz-generate-result"></div>
+                    <div class="sfz-toolbar-item" onclick="tjwApp.switchSFZTab('batch')" title="批量生成">
+                        <span>🔄</span>
+                    </div>
+                    <div class="sfz-toolbar-item" onclick="tjwApp.switchSFZTab('verify')" title="验证身份证">
+                        <span>✅</span>
+                    </div>
+                    <div class="sfz-toolbar-item" onclick="tjwApp.switchSFZTab('region')" title="查询归属地">
+                        <span>📍</span>
+                    </div>
                 </div>
 
-                <div class="sfz-card">
-                    <h3>批量生成身份证</h3>
-                    <div class="sfz-form-group">
-                        <label for="sfz-batch-count">生成数量 (1-100)</label>
-                        <input type="number" id="sfz-batch-count" value="5" min="1" max="100">
+                <!-- 生成单个身份证 -->
+                <div id="sfz-tab-generate" class="sfz-tab-content active">
+                    <div class="sfz-card">
+                        <h3>🆔 生成身份证</h3>
+                        <div class="sfz-form-group">
+                            <label for="sfz-sex">性别选择</label>
+                            <select id="sfz-sex" onkeydown="if(event.keyCode===13) tjwApp.sfzGenerate()">
+                                <option value="">🎲 随机</option>
+                                <option value="male">👨 男</option>
+                                <option value="female">👩 女</option>
+                            </select>
+                        </div>
+                        
+                        <div class="sfz-advanced-toggle" onclick="tjwApp.toggleAdvancedOptions()">
+                            <span>⚙️ 高级选项</span>
+                            <span class="sfz-advanced-arrow">▼</span>
+                        </div>
+                        <div id="sfz-advanced-options" class="sfz-advanced-options">
+                            <div class="sfz-form-group">
+                                <label for="sfz-region-code">地区编码（6位）</label>
+                                <input type="text" id="sfz-region-code" placeholder="如110000表示北京" onkeydown="if(event.keyCode===13) tjwApp.sfzGenerate()">
+                            </div>
+                            <div class="sfz-form-group">
+                                <label for="sfz-birth-date">出生日期</label>
+                                <input type="date" id="sfz-birth-date" onkeydown="if(event.keyCode===13) tjwApp.sfzGenerate()">
+                            </div>
+                        </div>
+                        
+                        <button class="sfz-btn" onclick="tjwApp.sfzGenerate()">
+                            <span>🎯 生成身份证</span>
+                        </button>
+                        <div id="sfz-generate-result"></div>
                     </div>
-                    <button class="sfz-btn" onclick="tjwApp.sfzBatchGenerate()">
-                        <span>🔄 批量生成</span>
-                    </button>
-                    <div id="sfz-batch-result"></div>
                 </div>
 
-                <div class="sfz-card">
-                    <h3>验证身份证</h3>
-                    <div class="sfz-form-group">
-                        <label for="sfz-verify">输入身份证号</label>
-                        <input type="text" id="sfz-verify" placeholder="请输入18位身份证号">
+                <!-- 批量生成 -->
+                <div id="sfz-tab-batch" class="sfz-tab-content">
+                    <div class="sfz-card">
+                        <h3>🔄 批量生成</h3>
+                        <div class="sfz-form-group">
+                            <label for="sfz-batch-count">生成数量 (1-100)</label>
+                            <input type="number" id="sfz-batch-count" value="5" min="1" max="100" onkeydown="if(event.keyCode===13) tjwApp.sfzBatchGenerate()">
+                        </div>
+                        <button class="sfz-btn" onclick="tjwApp.sfzBatchGenerate()">
+                            <span>🔄 批量生成</span>
+                        </button>
+                        <div id="sfz-batch-result"></div>
                     </div>
-                    <button class="sfz-btn" onclick="tjwApp.sfzVerify()">
-                        <span>✅ 验证</span>
-                    </button>
-                    <button class="sfz-btn sfz-btn-secondary" onclick="tjwApp.sfzRandomTest()">
-                        <span>🎲 随机测试</span>
-                    </button>
-                    <div id="sfz-verify-result"></div>
                 </div>
 
-                <div class="sfz-card">
-                    <h3>查询归属地</h3>
-                    <div class="sfz-form-group">
-                        <label for="sfz-region">身份证号（至少前6位）</label>
-                        <input type="text" id="sfz-region" placeholder="请输入身份证号前6位或完整号码">
+                <!-- 验证身份证 -->
+                <div id="sfz-tab-verify" class="sfz-tab-content">
+                    <div class="sfz-card">
+                        <h3>✅ 验证身份证</h3>
+                        <div class="sfz-form-group">
+                            <label for="sfz-verify">输入身份证号</label>
+                            <input type="text" id="sfz-verify" placeholder="请输入18位身份证号" onkeydown="if(event.keyCode===13) tjwApp.sfzVerify()">
+                        </div>
+                        <button class="sfz-btn" onclick="tjwApp.sfzVerify()">
+                            <span>✅ 验证</span>
+                        </button>
+                        <button class="sfz-btn sfz-btn-secondary" onclick="tjwApp.sfzRandomTest()">
+                            <span>🎲 随机测试</span>
+                        </button>
+                        <div id="sfz-verify-result"></div>
                     </div>
-                    <button class="sfz-btn" onclick="tjwApp.sfzGetRegion()">
-                        <span>📍 查询归属地</span>
-                    </button>
-                    <div id="sfz-region-result"></div>
+                </div>
+
+                <!-- 查询归属地 -->
+                <div id="sfz-tab-region" class="sfz-tab-content">
+                    <div class="sfz-card">
+                        <h3>📍 查询归属地</h3>
+                        <div class="sfz-form-group">
+                            <label for="sfz-region-input">身份证号（至少前6位）</label>
+                            <input type="text" id="sfz-region-input" placeholder="请输入身份证号前6位或完整号码" onkeydown="if(event.keyCode===13) tjwApp.sfzGetRegion()">
+                        </div>
+                        <button class="sfz-btn" onclick="tjwApp.sfzGetRegion()">
+                            <span>📍 查询归属地</span>
+                        </button>
+                        <div id="sfz-region-result"></div>
+                    </div>
                 </div>
             </div>
         `;
     }
 
+    switchSFZTab(tabName) {
+        document.querySelectorAll('.sfz-toolbar-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelectorAll('.sfz-tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        event.currentTarget.classList.add('active');
+        document.getElementById(`sfz-tab-${tabName}`).classList.add('active');
+    }
+
+    toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    toggleAdvancedOptions() {
+        const advancedOptions = document.getElementById('sfz-advanced-options');
+        const arrow = document.querySelector('.sfz-advanced-arrow');
+        advancedOptions.classList.toggle('show');
+        arrow.textContent = advancedOptions.classList.contains('show') ? '▲' : '▼';
+    }
+
     async sfzGenerate() {
         const sex = document.getElementById('sfz-sex').value;
+        const regionCode = document.getElementById('sfz-region-code').value.trim();
+        const birthDate = document.getElementById('sfz-birth-date').value;
+        
         let url = '/api/sfz/generate';
-        if (sex) url += `?sex=${sex}`;
+        const params = [];
+        if (sex) params.push(`sex=${sex}`);
+        if (regionCode) params.push(`region=${regionCode}`);
+        if (birthDate) params.push(`birth_date=${birthDate.replace(/-/g, '')}`);
+        
+        if (params.length > 0) url += '?' + params.join('&');
+        
         const result = await this.fetchAPI(url);
         this.showSFZResult('sfz-generate-result', result, true);
     }
@@ -305,7 +382,7 @@ class TJWApp {
     }
 
     async sfzGetRegion() {
-        const idNumber = document.getElementById('sfz-region').value.trim().replace(/\s/g, '');
+        const idNumber = document.getElementById('sfz-region-input').value.trim().replace(/\s/g, '');
         if (!idNumber || idNumber.length < 6) {
             this.showSFZResult('sfz-region-result', { success: false, message: '请输入至少6位' }, false);
             return;

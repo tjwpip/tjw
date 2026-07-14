@@ -1,8 +1,10 @@
-__version__ = "1.0.14"
+
 
 import argparse
 import subprocess
 import sys
+
+from tjw import __version__
 
 from tjw.core import tjw_class, hello
 
@@ -83,13 +85,13 @@ def start_server(port, host, reload):
         print("✅ 依赖安装完成")
         import uvicorn
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print(f"          📦 正在启动 TJW FastAPI 服务 (端口: {port})...")
-    print("="*70)
+    print("=" * 70)
 
     print_banner(port)
     print("💡 提示: 按 Ctrl+C 停止服务")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     try:
         uvicorn.run(
