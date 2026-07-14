@@ -63,6 +63,10 @@ setup(
 
     url=网站,
     packages=find_packages(),
+    package_data={
+        'tjw.core.shengfenzheng': ['*.json'],
+    },
+    include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
