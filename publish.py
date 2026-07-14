@@ -90,7 +90,7 @@ update_tjw_version(NEW_VERSION)
 print("📦 安装/升级打包依赖...")
 try:
     subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "twine", "wheel", "build"], check=True,
-                   capture_output=not DEBUG_MODE)
+                   capture_output=not DEBUG_MODE, encoding='utf-8')
     print("✅ 依赖安装完成")
 except Exception as e:
     print("❌ 依赖安装/升级失败")
@@ -112,7 +112,7 @@ clean()
 print(f"🟡 开始打包 {PACKAGE_NAME} {NEW_VERSION}...")
 cmd = [sys.executable, "-m", "build"]
 try:
-    result = subprocess.run(cmd, capture_output=not DEBUG_MODE, check=True, text=True)
+    result = subprocess.run(cmd, capture_output=not DEBUG_MODE, check=True, text=True, encoding='utf-8')
     if DEBUG_MODE and result.stdout:
         print(result.stdout)
 except subprocess.CalledProcessError as e:
@@ -141,7 +141,7 @@ upload_cmd = [
 if DEBUG_MODE:
     upload_cmd.append("--verbose")
 
-subprocess.run(upload_cmd, check=True)
+subprocess.run(upload_cmd, check=True, encoding='utf-8')
 
 # ===================== 收尾 =====================
 if not DEBUG_MODE:
