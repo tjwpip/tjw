@@ -3,7 +3,7 @@ from .models import *
 from .utils import *
 
 __all__ = [
-    'Database', 'OperationLog', 'SFZRecord', 'UserSetting',
+    'Database', 'OperationLog', 'SFZRecord', 'UserSetting', 'User',
     'get_db', 'log_operation', 'record_sfz_generation', 
     'record_sfz_verification', 'get_settings', 'get_setting', 
     'set_setting', 'get_statistics'

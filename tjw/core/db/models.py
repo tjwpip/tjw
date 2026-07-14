@@ -66,3 +66,23 @@ class UserSetting:
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
+
+
+class User:
+    def __init__(self, id: int = None, username: str = None, password_hash: str = None,
+                 email: str = None, created_at: datetime = None, updated_at: datetime = None):
+        self.id = id
+        self.username = username
+        self.password_hash = password_hash
+        self.email = email
+        self.created_at = created_at or datetime.now()
+        self.updated_at = updated_at or datetime.now()
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }

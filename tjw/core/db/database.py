@@ -1,9 +1,10 @@
 import os
 import sqlite3
+import hashlib
 from datetime import datetime
 from typing import List, Optional, Dict
 
-from .models import OperationLog, SFZRecord, UserSetting
+from .models import OperationLog, SFZRecord, UserSetting, User
 
 
 class Database:
@@ -69,6 +70,17 @@ class Database:
             ''')
 
             cursor.execute('''
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    email TEXT,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            cursor.execute('''
                 CREATE INDEX IF NOT EXISTS idx_sfz_records_created_at ON sfz_records(created_at)
             ''')
             cursor.execute('''
@@ -77,8 +89,22 @@ class Database:
             cursor.execute('''
                 CREATE INDEX IF NOT EXISTS idx_user_settings_key ON user_settings(key)
             ''')
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)
+            ''')
+
+            cursor.execute('SELECT COUNT(*) FROM users WHERE username = ?', ('admin',))
+            if cursor.fetchone()[0] == 0:
+                admin_password_hash = self._hash_password('admin')
+                cursor.execute('''
+                    INSERT INTO users (username, password_hash, created_at, updated_at)
+                    VALUES (?, ?, ?, ?)
+                ''', ('admin', admin_password_hash, datetime.now(), datetime.now()))
 
             conn.commit()
+
+    def _hash_password(self, password: str) -> str:
+        return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     def add_operation_log(self, operation_type: str, module: str, details: str = None, ip_address: str = None):
         with self._get_connection() as conn:
@@ -185,3 +211,40 @@ class Database:
             cursor.execute('DELETE FROM operation_logs WHERE created_at < ?', (cutoff_date,))
             cursor.execute('DELETE FROM sfz_records WHERE created_at < ?', (cutoff_date,))
             conn.commit()
+
+    def get_user_by_username(self, username: str) -> Optional[User]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT id, username, password_hash, email, created_at, updated_at FROM users WHERE username = ?', (username,))
+            row = cursor.fetchone()
+            return User(*row) if row else None
+
+    def verify_user(self, username: str, password: str) -> Optional[User]:
+        user = self.get_user_by_username(username)
+        if user and user.password_hash == self._hash_password(password):
+            return user
+        return None
+
+    def update_user_password(self, username: str, new_password: str) -> bool:
+        password_hash = self._hash_password(new_password)
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users 
+                SET password_hash = ?, updated_at = ? 
+                WHERE username = ?
+            ''', (password_hash, datetime.now(), username))
+            conn.commit()
+            return cursor.rowcount > 0
+
+    def reset_admin_password(self):
+        admin_password_hash = self._hash_password('admin')
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users 
+                SET password_hash = ?, updated_at = ? 
+                WHERE username = 'admin'
+            ''', (admin_password_hash, datetime.now()))
+            conn.commit()
+            return cursor.rowcount > 0

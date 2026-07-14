@@ -1,0 +1,121 @@
+{
+    "groups": [
+        {
+            "id": 1000,
+            "name": "已完成",
+            "description": "已完成开发的功能",
+            "icon": "✅",
+            "items": [
+                {
+                    "id": 1001,
+                    "key": "dashboard",
+                    "name": "仪表盘",
+                    "icon": "📊",
+                    "description": "系统概览和快速访问"
+                },
+                {
+                    "id": 1002,
+                    "key": "sfz",
+                    "name": "身份证工具",
+                    "icon": "🆔",
+                    "description": "身份证生成、验证、归属地查询"
+                },
+                {
+                    "id": 1003,
+                    "key": "tools",
+                    "name": "实用工具",
+                    "icon": "🛠️",
+                    "description": "各种实用小工具集合"
+                },
+                {
+                    "id": 1004,
+                    "key": "settings",
+                    "name": "系统设置",
+                    "icon": "⚙️",
+                    "description": "系统配置和个性化设置"
+                },
+                {
+                    "id": 1005,
+                    "key": "about",
+                    "name": "关于",
+                    "icon": "ℹ️",
+                    "description": "系统版本信息和说明"
+                },
+                {
+                    "id": 1006,
+                    "key": "api_docs",
+                    "name": "API文档",
+                    "icon": "📖",
+                    "description": "查看API接口文档",
+                    "action": "open_url",
+                    "url": "/docs"
+                },
+                {
+                    "id": 1007,
+                    "key": "change_password",
+                    "name": "修改密码",
+                    "icon": "🔑",
+                    "description": "修改登录密码",
+                    "action": "show_modal",
+                    "modal": "change_password"
+                }
+            ]
+        },
+        {
+            "id": 8000,
+            "name": "正在开发",
+            "description": "正在开发中的功能",
+            "icon": "🔄",
+            "items": [
+                {
+                    "id": 8001,
+                    "key": "user_management",
+                    "name": "用户管理",
+                    "icon": "👥",
+                    "description": "管理系统用户",
+                    "disabled": true
+                },
+                {
+                    "id": 8002,
+                    "key": "data_export",
+                    "name": "数据导出",
+                    "icon": "📥",
+                    "description": "导出数据报表",
+                    "disabled": true
+                }
+            ]
+        },
+        {
+            "id": 9000,
+            "name": "未来开发",
+            "description": "规划中的功能",
+            "icon": "📋",
+            "items": [
+                {
+                    "id": 9001,
+                    "key": "report_analysis",
+                    "name": "报表分析",
+                    "icon": "📈",
+                    "description": "数据分析和可视化报表",
+                    "disabled": true
+                },
+                {
+                    "id": 9002,
+                    "key": "notification",
+                    "name": "消息通知",
+                    "icon": "🔔",
+                    "description": "系统消息和通知中心",
+                    "disabled": true
+                },
+                {
+                    "id": 9003,
+                    "key": "audit_log",
+                    "name": "审计日志",
+                    "icon": "📝",
+                    "description": "操作审计和日志记录",
+                    "disabled": true
+                }
+            ]
+        }
+    ]
+}

@@ -7,75 +7,163 @@
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>
-                    <span class="logo">T</span>
-                    <span class="sidebar-title">TJW 工具平台</span>
-                </h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-item active" data-module="dashboard" title="仪表盘">
-                    <span class="nav-item-icon">📊</span>
-                    <span class="nav-item-text">仪表盘</span>
-                </div>
-                <div class="nav-item" data-module="sfz" title="身份证工具">
-                    <span class="nav-item-icon">🆔</span>
-                    <span class="nav-item-text">身份证工具</span>
-                </div>
-                <div class="nav-item" data-module="tools" title="实用工具">
-                    <span class="nav-item-icon">🔧</span>
-                    <span class="nav-item-text">实用工具</span>
-                </div>
-                <div class="nav-item" data-module="settings" title="系统设置">
-                    <span class="nav-item-icon">⚙️</span>
-                    <span class="nav-item-text">系统设置</span>
-                </div>
-            </nav>
+<div id="tjw-modal" class="tjw-modal hidden">
+    <div class="tjw-modal-overlay" onclick="TJWUI.hide()"></div>
+    <div class="tjw-modal-content">
+        <div class="tjw-modal-icon" id="tjw-modal-icon">📢</div>
+        <h3 class="tjw-modal-title" id="tjw-modal-title">提示</h3>
+        <p class="tjw-modal-message" id="tjw-modal-message">这是一条提示消息</p>
+        <div class="tjw-modal-actions">
+            <button class="tjw-btn tjw-btn-secondary" id="tjw-modal-btn-cancel" onclick="TJWUI.hide()">取消</button>
+            <button class="tjw-btn tjw-btn-primary" id="tjw-modal-btn-confirm" onclick="TJWUI.confirm()">确定</button>
+        </div>
+    </div>
+</div>
+<div id="login-container" class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-logo">T</div>
+            <h1 class="login-title">TJW 工具平台</h1>
+            <p class="login-subtitle">请登录以使用系统功能</p>
+        </div>
 
-            <div class="sidebar-footer">
-                <div class="sidebar-footer-item" onclick="window.open('/docs', '_blank')" title="API 文档">
-                    <span>📖</span>
-                    <span class="sidebar-footer-text">API 文档</span>
-                </div>
-                <div class="sidebar-footer-item" onclick="window.open('https://github.com/tjwpip/tjw', '_blank')" title="GitHub">
-                    <span>🐙</span>
-                    <span class="sidebar-footer-text">GitHub</span>
-                </div>
-                <div class="sidebar-collapse-btn" onclick="tjwApp.toggleSidebar()" title="收缩侧边栏">
-                    <span>↔️</span>
-                </div>
+        <form class="login-form" id="login-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" placeholder="请输入用户名" value="admin" required>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <div class="menu-toggle">☰</div>
-                    <h2 class="header-title">仪表盘</h2>
-                </div>
-                <div class="header-right">
-                    <button class="header-btn secondary" onclick="tjwApp.loadModule('dashboard')">
-                        🏠 首页
-                    </button>
-                    <button class="header-btn primary" onclick="window.open('/docs', '_blank')">
-                        📖 API文档
-                    </button>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <div class="page-content" id="page-content">
-                <!-- Content will be loaded dynamically -->
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入密码" required>
             </div>
-        </main>
+            <div class="login-form-actions">
+                <button type="button" class="btn-link" onclick="showResetGuide()">忘记密码？</button>
+            </div>
+            <button type="submit" class="btn-primary btn-block">登 录</button>
+            <div class="login-hint">
+                默认账号：admin / admin
+            </div>
+        </form>
+
+        <div class="login-error" id="login-error"></div>
     </div>
 
-    <script src="/static/js/main.js"></script>
+    <div class="reset-guide-modal" id="reset-guide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>忘记密码操作指南</h3>
+                <button class="modal-close" onclick="hideResetGuide()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="guide-section">
+                    <h4>方法一：删除数据库文件</h4>
+                    <ol>
+                        <li>关闭应用程序</li>
+                        <li>删除 data/tjw.db 文件</li>
+                        <li>重新启动应用，系统会自动创建管理员账户（admin/admin）</li>
+                    </ol>
+                </div>
+                <div class="guide-section">
+                    <h4>方法二：执行SQL语句</h4>
+                    <ol>
+                        <li>使用SQLite客户端连接 data/tjw.db</li>
+                        <li>执行SQL：<code>UPDATE users SET password_hash =
+                            '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' WHERE username =
+                            'admin';</code></li>
+                        <li>重新启动应用即可使用 admin/admin 登录</li>
+                    </ol>
+                </div>
+                <div class="guide-credentials">
+                    <strong>默认登录信息：</strong><br>
+                    用户名：admin<br>
+                    密码：admin
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="hideResetGuide()">我知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="app-container" class="app-container hidden">
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>
+                <span class="logo">T</span>
+                <span class="sidebar-title">TJW 工具平台</span>
+            </h1>
+        </div>
+
+        <div class="sidebar-search">
+            <input type="text" id="sidebar-search-input" placeholder="搜索菜单..." onkeyup="searchMenu()">
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <nav class="sidebar-nav" id="sidebar-nav">
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item sidebar-footer-item logout-btn" onclick="logout()" title="退出登录">
+                <span class="nav-item-icon">🚪</span>
+                <span class="nav-item-text">退出登录</span>
+            </div>
+            <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="折叠侧边栏" id="sidebar-collapse-btn">
+                <span id="collapse-icon">➖</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="header-left">
+                <div class="menu-toggle">☰</div>
+                <h2 class="header-title">仪表盘</h2>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-icon">👤</span>
+                    <span class="user-name" id="current-user">admin</span>
+                </div>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="切换主题" id="theme-toggle-btn">🌙</button>
+            </div>
+        </header>
+
+        <div class="page-content" id="page-content">
+        </div>
+    </main>
+</div>
+
+<div class="change-password-modal" id="change-password-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>修改密码</h3>
+            <button class="modal-close" onclick="hideChangePassword()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="change-password-form" id="change-password-form">
+                <div class="form-group">
+                    <label for="old-password">旧密码</label>
+                    <input type="password" id="old-password" name="old-password" placeholder="请输入旧密码" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">新密码</label>
+                    <input type="password" id="new-password" name="new-password" placeholder="请输入新密码（至少6位）"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="请再次输入新密码"
+                           required>
+                </div>
+                <div class="change-password-error" id="change-password-error"></div>
+                <button type="submit" class="btn-primary btn-block">确认修改</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/main.js"></script>
 </body>
 </html>

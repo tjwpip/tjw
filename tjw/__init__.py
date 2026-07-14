@@ -1,6 +1,6 @@
 from tjw.core import *
 
-__version__ = "1.0.18"
+__version__ = "1.0.19"
 if __name__ == '__main__':
     result = hello()
     print(f"结果：{result}")
