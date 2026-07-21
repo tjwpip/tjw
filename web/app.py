@@ -1,13 +1,13 @@
-import os
+﻿import os
 from fastapi import FastAPI, Path, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
-from web.routers import sfz_router, auth_router, about_router
+from web.routers import sfz_router, auth_router, about_router, upgrade_router
 from tjw.core.shengfenzheng.sfz import CShengFenZheng
 
 app = FastAPI(
     title="TJW API",
-    description="TJW 绉佷汉椤圭洰 API 鎺ュ彛鏂囨。",
+    description="TJW 工具平台 API 服务",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -19,7 +19,8 @@ MODULE_MAP = {
     1003: "tools",
     1004: "settings",
     1005: "auth",
-    1006: "about"
+    1006: "about",
+    1007: "upgrade"
 }
 
 sfz_tool = CShengFenZheng()
@@ -27,6 +28,7 @@ sfz_tool = CShengFenZheng()
 app.include_router(sfz_router, prefix="/api/sfz", tags=["身份证工具"])
 app.include_router(auth_router, prefix="/api/auth", tags=["用户认证"])
 app.include_router(about_router, prefix="/api/about", tags=["关于"])
+app.include_router(upgrade_router, prefix="/api/upgrade", tags=["升级更新"])
 
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 
@@ -58,6 +60,7 @@ async def get_modules():
             {"id": 1003, "name": "实用工具", "key": "tools", "icon": "🛠️"},
             {"id": 1004, "name": "系统设置", "key": "settings", "icon": "⚙️"},
             {"id": 1005, "name": "用户管理", "key": "auth", "icon": "👤"},
-            {"id": 1006, "name": "关于", "key": "about", "icon": "ℹ️"}
+            {"id": 1006, "name": "关于", "key": "about", "icon": "ℹ️"},
+            {"id": 1007, "name": "升级更新", "key": "upgrade", "icon": "⬆️"}
         ]
     }

@@ -1,4 +1,4 @@
-{
+﻿{
     "groups": [
         {
             "id": 1000,
@@ -11,7 +11,7 @@
                     "key": "dashboard",
                     "name": "仪表盘",
                     "icon": "📊",
-                    "description": "系统概览和快速访问"
+                    "description": "系统监控和快速查询"
                 },
                 {
                     "id": 1002,
@@ -42,6 +42,13 @@
                     "description": "系统版本信息和说明"
                 },
                 {
+                    "id": 1007,
+                    "key": "upgrade",
+                    "name": "升级更新",
+                    "icon": "⬆️",
+                    "description": "检查更新并升级系统"
+                },
+                {
                     "id": 1006,
                     "key": "api_docs",
                     "name": "API文档",
@@ -51,10 +58,10 @@
                     "url": "/docs"
                 },
                 {
-                    "id": 1007,
+                    "id": 1008,
                     "key": "change_password",
                     "name": "修改密码",
-                    "icon": "🔑",
+                    "icon": "🔐",
                     "description": "修改登录密码",
                     "action": "show_modal",
                     "modal": "change_password"
@@ -79,7 +86,7 @@
                     "id": 8002,
                     "key": "data_export",
                     "name": "数据导出",
-                    "icon": "📥",
+                    "icon": "📤",
                     "description": "导出数据报表",
                     "disabled": true
                 }
@@ -89,7 +96,7 @@
             "id": 9000,
             "name": "未来开发",
             "description": "规划中的功能",
-            "icon": "📋",
+            "icon": "🔮",
             "items": [
                 {
                     "id": 9001,
@@ -111,7 +118,7 @@
                     "id": 9003,
                     "key": "audit_log",
                     "name": "审计日志",
-                    "icon": "📝",
+                    "icon": "📋",
                     "description": "操作审计和日志记录",
                     "disabled": true
                 }

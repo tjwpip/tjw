@@ -3,6 +3,9 @@
 import argparse
 import subprocess
 import sys
+import threading
+import time
+import webbrowser
 
 from tjw import __version__
 
@@ -75,6 +78,16 @@ def print_banner(port):
     print(banner)
 
 
+def open_browser(port):
+    time.sleep(2)
+    url = f"http://127.0.0.1:{port}"
+    try:
+        webbrowser.open(url)
+        print(f"🌐 已在默认浏览器中打开: {url}")
+    except Exception as e:
+        print(f"⚠️  自动打开浏览器失败: {e}")
+
+
 def start_server(port, host, reload):
     try:
         import uvicorn
@@ -92,6 +105,8 @@ def start_server(port, host, reload):
     print_banner(port)
     print("💡 提示: 按 Ctrl+C 停止服务")
     print("=" * 70 + "\n")
+
+    threading.Thread(target=open_browser, args=(port,), daemon=True).start()
 
     try:
         uvicorn.run(
